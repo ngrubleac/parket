@@ -24,14 +24,14 @@ const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-espresso/95 backdrop-blur-xl"
+                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-espresso/95 backdrop-blur-xl overflow-y-auto pt-24 sm:pt-32"
                 onClick={onClose}
             >
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
                     animate={{ scale: 1, opacity: 1, y: 0 }}
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                    className="relative bg-parchment w-full max-w-6xl rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/10"
+                    className="relative bg-parchment w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/10 my-auto"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Close Button */}

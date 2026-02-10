@@ -137,35 +137,24 @@ export default function Calculator({ lang }: CalculatorProps) {
                 </div>
             </div>
 
-            {/* Extras */}
+            {/* Extras - Now informational */}
             <div className="mb-10 space-y-4">
                 <label className="block text-sm font-medium text-stone-600 uppercase tracking-wider">{t('calc.extras')}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className={`flex items-center p-4 rounded-2xl border transition-all cursor-pointer ${extras.gapFilling ? 'bg-cognac/5 border-cognac' : 'bg-stone-50 border-transparent'}`} onClick={() => setExtras({ ...extras, gapFilling: !extras.gapFilling })}>
-                        <input
-                            id="gap"
-                            type="checkbox"
-                            checked={extras.gapFilling}
-                            readOnly
-                            className="h-5 w-5 text-cognac focus:ring-cognac border-stone-300 rounded"
-                        />
-                        <label htmlFor="gap" className="ml-3 block text-sm font-medium text-stone-700 cursor-pointer">
+                    <div className="flex items-start p-4 rounded-2xl bg-stone-50 border border-stone-100">
+                        <div className="mt-1 text-cognac mr-3">💡</div>
+                        <p className="text-sm font-medium text-stone-700">
                             {t('calc.extra.gap')}
-                        </label>
+                        </p>
                     </div>
-                    <div className={`flex items-center p-4 rounded-2xl border transition-all cursor-pointer ${extras.skirting ? 'bg-cognac/5 border-cognac' : 'bg-stone-50 border-transparent'}`} onClick={() => setExtras({ ...extras, skirting: !extras.skirting })}>
-                        <input
-                            id="skirt"
-                            type="checkbox"
-                            checked={extras.skirting}
-                            readOnly
-                            className="h-5 w-5 text-cognac focus:ring-cognac border-stone-300 rounded"
-                        />
-                        <label htmlFor="skirt" className="ml-3 block text-sm font-medium text-stone-700 cursor-pointer">
+                    <div className="flex items-start p-4 rounded-2xl bg-stone-50 border border-stone-100">
+                        <div className="mt-1 text-cognac mr-3">💡</div>
+                        <p className="text-sm font-medium text-stone-700">
                             {t('calc.extra.skirt')}
-                        </label>
+                        </p>
                     </div>
                 </div>
+                <p className="text-xs text-stone-400 italic mt-2 text-center">* {lang === 'ru' ? 'Вышеуказанные работы рассчитываются индивидуально при замере' : 'Lucrările menționate se calculează individual în timpul măsurătorilor'}</p>
             </div>
 
             {/* Price Display */}
