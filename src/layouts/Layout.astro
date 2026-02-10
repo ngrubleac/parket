@@ -1,0 +1,43 @@
+---
+import "../styles/global.css";
+
+interface Props {
+	title: string;
+	description?: string;
+	lang?: string;
+}
+
+const {
+	title,
+	description = "Restaurarea parchetului în Moldova. Cicluire, lăcuire, reparație.",
+	lang = "ru",
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="description" content={description} />
+		<meta name="viewport" content="width=device-width" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<meta name="generator" content={Astro.generator} />
+		<title>{title}</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Lora:wght@400;500;600;700&display=swap"
+			rel="stylesheet"
+		/>
+	</head>
+	<body
+		class="font-sans antialiased text-stone-900 bg-[#fdfcfb] relative selection:bg-amber-200"
+	>
+		{/* Global Grain Texture Overlay */}
+		<div
+			class="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"
+		>
+		</div>
+		<slot />
+	</body>
+</html>

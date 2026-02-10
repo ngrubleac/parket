@@ -1,0 +1,19 @@
+---
+import LandingPage from "../../components/LandingPage.astro";
+import { createReader } from "@keystatic/core/reader";
+import config from "../../../keystatic.config";
+
+const reader = createReader(process.cwd(), config);
+const rawGalleryItems = await reader.collections.gallery.all();
+
+const galleryItems = rawGalleryItems.map((item) => ({
+  id: item.slug,
+  title: item.entry.title,
+  beforeImage: item.entry.beforeImage,
+  afterImage: item.entry.afterImage,
+}));
+
+const lang = "ro";
+---
+
+<LandingPage lang={lang} galleryItems={galleryItems} />

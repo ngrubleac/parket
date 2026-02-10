@@ -1,0 +1,234 @@
+import * as React from 'react';
+import { ui } from '../i18n/ui';
+
+interface CalculatorProps {
+    lang: 'ru' | 'ro';
+}
+
+type Condition = 'standard' | 'painted' | 'severe';
+type ServiceType = 'sanding_only' | 'sanding_varnish' | 'turnkey';
+
+export default function Calculator({ lang }: CalculatorProps) {
+    const t = (key: string) => (ui[lang] as any)[key] || (ui['ru'] as any)[key];
+
+    const [area, setArea] = React.useState(20);
+    const [condition, setCondition] = React.useState<Condition>('standard');
+    const [serviceType, setServiceType] = React.useState<ServiceType>('sanding_varnish');
+    const [extras, setExtras] = React.useState({
+        gapFilling: false,
+        skirting: false
+    });
+
+    const [showContact, setShowContact] = React.useState(false);
+    const [contactForm, setContactForm] = React.useState({ name: '', phone: '' });
+    const [status, setStatus] = React.useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+
+    // Logic
+    const calculatePrice = () => {
+        const RATES = {
+            sanding_only: 100,
+            sanding_varnish: 150,
+            turnkey: 200
+        };
+
+        let baseRate = RATES[serviceType];
+        let conditionMultiplier = 1.0;
+        if (condition === 'painted') conditionMultiplier = 1.2;
+        if (condition === 'severe') conditionMultiplier = 1.4;
+
+        let serviceCost = (baseRate * conditionMultiplier) * area;
+        let extrasCost = 0;
+
+        if (extras.gapFilling) {
+            extrasCost += (20 * area);
+        }
+        if (extras.skirting) {
+            const estimatedPerimeter = Math.sqrt(area) * 4;
+            extrasCost += (30 * estimatedPerimeter);
+        }
+
+        return Math.round(serviceCost + extrasCost);
+    };
+
+    const price = calculatePrice();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setStatus('sending');
+
+        try {
+            const payload = {
+                type: 'calculator_lead',
+                data: {
+                    name: contactForm.name,
+                    phone: contactForm.phone,
+                    calculation: {
+                        area,
+                        condition,
+                        service: serviceType,
+                        extras,
+                        total_price: `${price} MDL`
+                    }
+                }
+            };
+
+            const res = await fetch('/api/telegram', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (res.ok) {
+                setStatus('success');
+            } else {
+                setStatus('error');
+            }
+        } catch (err) {
+            setStatus('error');
+        }
+    };
+
+    return (
+        <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-2xl border border-stone-100 max-w-2xl mx-auto text-left" id="calculator">
+            <h2 className="text-3xl font-serif font-bold text-stone-900 mb-8 text-center">{t('calc.title')} <span className="text-cognac">{t('calc.title_accent')}</span></h2>
+
+            {/* Area */}
+            <div className="mb-8">
+                <label className="block text-sm font-medium text-stone-600 mb-3 uppercase tracking-wider">
+                    {t('calc.area')}: <span className="font-bold text-cognac text-xl ml-2">{area}</span>
+                </label>
+                <input
+                    type="range"
+                    min="10"
+                    max="100"
+                    value={area}
+                    onChange={(e) => setArea(Number(e.target.value))}
+                    className="w-full h-2 bg-stone-100 rounded-lg appearance-none cursor-pointer accent-cognac"
+                />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                {/* Condition */}
+                <div>
+                    <label className="block text-sm font-medium text-stone-600 mb-3 uppercase tracking-wider">{t('calc.condition')}</label>
+                    <select
+                        value={condition}
+                        onChange={(e) => setCondition(e.target.value as Condition)}
+                        className="w-full border border-stone-200 rounded-2xl shadow-sm focus:border-cognac focus:ring-cognac py-4 px-5 bg-stone-50/30 text-stone-800"
+                    >
+                        <option value="standard">{t('calc.cond.standard')}</option>
+                        <option value="painted">{t('calc.cond.painted')}</option>
+                        <option value="severe">{t('calc.cond.severe')}</option>
+                    </select>
+                </div>
+
+                {/* Service */}
+                <div>
+                    <label className="block text-sm font-medium text-stone-600 mb-3 uppercase tracking-wider">{t('calc.service')}</label>
+                    <select
+                        value={serviceType}
+                        onChange={(e) => setServiceType(e.target.value as ServiceType)}
+                        className="w-full border border-stone-200 rounded-2xl shadow-sm focus:border-cognac focus:ring-cognac py-4 px-5 bg-stone-50/30 text-stone-800"
+                    >
+                        <option value="sanding_only">{t('calc.serv.sanding_only')}</option>
+                        <option value="sanding_varnish">{t('calc.serv.sanding_varnish')}</option>
+                        <option value="turnkey">{t('calc.serv.turnkey')}</option>
+                    </select>
+                </div>
+            </div>
+
+            {/* Extras */}
+            <div className="mb-10 space-y-4">
+                <label className="block text-sm font-medium text-stone-600 uppercase tracking-wider">{t('calc.extras')}</label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className={`flex items-center p-4 rounded-2xl border transition-all cursor-pointer ${extras.gapFilling ? 'bg-cognac/5 border-cognac' : 'bg-stone-50 border-transparent'}`} onClick={() => setExtras({ ...extras, gapFilling: !extras.gapFilling })}>
+                        <input
+                            id="gap"
+                            type="checkbox"
+                            checked={extras.gapFilling}
+                            readOnly
+                            className="h-5 w-5 text-cognac focus:ring-cognac border-stone-300 rounded"
+                        />
+                        <label htmlFor="gap" className="ml-3 block text-sm font-medium text-stone-700 cursor-pointer">
+                            {t('calc.extra.gap')}
+                        </label>
+                    </div>
+                    <div className={`flex items-center p-4 rounded-2xl border transition-all cursor-pointer ${extras.skirting ? 'bg-cognac/5 border-cognac' : 'bg-stone-50 border-transparent'}`} onClick={() => setExtras({ ...extras, skirting: !extras.skirting })}>
+                        <input
+                            id="skirt"
+                            type="checkbox"
+                            checked={extras.skirting}
+                            readOnly
+                            className="h-5 w-5 text-cognac focus:ring-cognac border-stone-300 rounded"
+                        />
+                        <label htmlFor="skirt" className="ml-3 block text-sm font-medium text-stone-700 cursor-pointer">
+                            {t('calc.extra.skirt')}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            {/* Price Display */}
+            <div className="bg-stone-50 p-8 rounded-[2rem] mb-8 text-center shadow-inner relative overflow-hidden group border border-stone-100">
+                <div className="absolute inset-0 opacity-5 bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')]"></div>
+                <div className="relative z-10">
+                    <div className="text-xs text-stone-500 mb-2 uppercase tracking-[0.2em] font-bold">{t('calc.total')}</div>
+                    <div className="text-5xl font-extrabold text-cognac group-hover:scale-105 transition-transform duration-500">
+                        {price} <span className="text-2xl ml-1 font-light opacity-80 text-stone-400">MDL</span>
+                    </div>
+                </div>
+            </div>
+
+            {!showContact ? (
+                <button
+                    onClick={() => setShowContact(true)}
+                    className="w-full bg-cognac text-white py-5 rounded-2xl font-bold hover:brightness-110 transition shadow-xl transform active:scale-[0.98]"
+                >
+                    {t('calc.save_cta')}
+                </button>
+            ) : (
+                <form onSubmit={handleSubmit} className="space-y-5 animate-fadeIn">
+                    <div>
+                        <label className="block text-sm font-medium text-stone-600 uppercase tracking-wider mb-2">{t('calc.name')}</label>
+                        <input
+                            type="text"
+                            required
+                            placeholder="Alexandru"
+                            value={contactForm.name}
+                            onChange={(e) => setContactForm({ ...contactForm, name: e.target.value })}
+                            className="block w-full border-stone-200 rounded-2xl shadow-sm focus:ring-cognac focus:border-cognac py-4 px-5 bg-stone-50/30"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-stone-600 uppercase tracking-wider mb-2">{t('calc.phone')}</label>
+                        <input
+                            type="tel"
+                            required
+                            placeholder="+373 6X XX XX XX"
+                            value={contactForm.phone}
+                            onChange={(e) => setContactForm({ ...contactForm, phone: e.target.value })}
+                            className="block w-full border-stone-200 rounded-2xl shadow-sm focus:ring-cognac focus:border-cognac py-4 px-5 bg-stone-50/30"
+                        />
+                    </div>
+
+                    {status === 'sending' && <p className="text-stone-500 text-center animate-pulse">...</p>}
+                    {status === 'error' && <p className="text-red-500 text-center text-sm">{t('calc.error')}</p>}
+
+                    {status === 'success' ? (
+                        <div className="bg-green-50 text-green-700 p-6 rounded-2xl text-center border border-green-100 font-medium">
+                            {t('calc.success')}
+                        </div>
+                    ) : (
+                        <button
+                            type="submit"
+                            disabled={status === 'sending'}
+                            className="w-full bg-green-600 text-white py-5 rounded-2xl font-bold hover:bg-green-700 transition shadow-xl transform active:scale-[0.98]"
+                        >
+                            {t('calc.submit')}
+                        </button>
+                    )}
+                </form>
+            )}
+        </div>
+    );
+}

@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-espresso: #1a120b;
+    --color-walnut: #3d2b1f;
+    --color-cognac: #438200;
+    --color-parchment: #fdfcfb;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: 'Lora', serif;
+  }
+}

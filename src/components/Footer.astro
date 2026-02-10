@@ -1,0 +1,30 @@
+---
+import { useTranslations } from "../i18n/ui";
+const { lang = "ru" } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<footer class="bg-gray-900 text-white py-12" id="contacts">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div>
+        <h3 class="text-xl font-bold mb-4">MasterParchet</h3>
+        <p class="text-gray-400">
+          {t("footer.desc")}
+        </p>
+      </div>
+      <div class="md:text-right">
+        <p class="text-gray-400">📍 {t("contacts.location_val")}</p>
+        <p class="text-gray-400">
+          📞 <a href="tel:+37369123456" class="hover:text-white"
+            >+373 69 123 456</a>
+        </p>
+      </div>
+    </div>
+    <div
+      class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-500 text-sm"
+    >
+      &copy; {new Date().getFullYear()} MasterParchet. {t("footer.copyright")}
+    </div>
+  </div>
+</footer>

@@ -1,0 +1,28 @@
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# build
+/dist
+
+# astro
+.astro
+
+# misc
+.DS_Store
+*.pem
+
+# environment variables
+.env
+.env.production
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# keystatic
+.keystatic
