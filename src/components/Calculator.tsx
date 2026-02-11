@@ -39,6 +39,13 @@ export default function Calculator({ lang }: CalculatorProps) {
         e.preventDefault();
         setStatus('sending');
 
+        console.log('Sending payload:', {
+            name: contactForm.name,
+            phone: contactForm.phone,
+            area,
+            price
+        });
+
         try {
             const payload = {
                 type: 'calculator_lead',
@@ -59,12 +66,17 @@ export default function Calculator({ lang }: CalculatorProps) {
                 body: JSON.stringify(payload)
             });
 
+            console.log('Response status:', res.status);
+
             if (res.ok) {
                 setStatus('success');
             } else {
+                const errorData = await res.json().catch(() => ({}));
+                console.error('Server error details:', errorData);
                 setStatus('error');
             }
         } catch (err) {
+            console.error('Network or fetch error:', err);
             setStatus('error');
         }
     };
