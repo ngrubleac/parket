@@ -33,7 +33,7 @@ const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-8 bg-espresso/95 backdrop-blur-xl overflow-y-auto pt-24 sm:pt-32"
+                className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-8 bg-espresso/98 backdrop-blur-2xl overflow-y-auto pt-24 sm:pt-32"
                 onClick={onClose}
             >
                 <motion.div
