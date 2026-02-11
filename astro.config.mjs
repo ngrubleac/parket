@@ -12,7 +12,7 @@ export default defineConfig({
     react(),
     keystatic()
   ],
-  output: 'hybrid',
+  output: 'static',
   i18n: {
     defaultLocale: 'ru',
     locales: ['ru', 'ro'],

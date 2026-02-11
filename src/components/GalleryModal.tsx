@@ -18,6 +18,15 @@ interface Props {
 const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
     const t = (key: string) => (ui[lang] as any)[key] || (ui['ru'] as any)[key];
 
+    // Lock body scroll when modal is open
+    React.useEffect(() => {
+        const originalStyle = window.getComputedStyle(document.body).overflow;
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.body.style.overflow = originalStyle;
+        };
+    }, []);
+
     return (
         <AnimatePresence>
             <motion.div

@@ -5,15 +5,10 @@ interface CalculatorProps {
     lang: 'ru' | 'ro';
 }
 
-type Condition = 'standard' | 'painted' | 'severe';
-type ServiceType = 'sanding_only' | 'sanding_varnish' | 'turnkey';
-
 export default function Calculator({ lang }: CalculatorProps) {
     const t = (key: string) => (ui[lang] as any)[key] || (ui['ru'] as any)[key];
 
     const [area, setArea] = React.useState(20);
-    const [condition, setCondition] = React.useState<Condition>('standard');
-    const [serviceType, setServiceType] = React.useState<ServiceType>('sanding_varnish');
     const [extras, setExtras] = React.useState({
         gapFilling: false,
         skirting: false
@@ -31,23 +26,11 @@ export default function Calculator({ lang }: CalculatorProps) {
             turnkey: 200
         };
 
-        let baseRate = RATES[serviceType];
-        let conditionMultiplier = 1.0;
-        if (condition === 'painted') conditionMultiplier = 1.2;
-        if (condition === 'severe') conditionMultiplier = 1.4;
+        let baseRate = 300;
 
-        let serviceCost = (baseRate * conditionMultiplier) * area;
-        let extrasCost = 0;
+        let serviceCost = baseRate * area;
 
-        if (extras.gapFilling) {
-            extrasCost += (20 * area);
-        }
-        if (extras.skirting) {
-            const estimatedPerimeter = Math.sqrt(area) * 4;
-            extrasCost += (30 * estimatedPerimeter);
-        }
-
-        return Math.round(serviceCost + extrasCost);
+        return Math.round(serviceCost);
     };
 
     const price = calculatePrice();
@@ -64,8 +47,6 @@ export default function Calculator({ lang }: CalculatorProps) {
                     phone: contactForm.phone,
                     calculation: {
                         area,
-                        condition,
-                        service: serviceType,
                         extras,
                         total_price: `${price} MDL`
                     }
@@ -107,49 +88,19 @@ export default function Calculator({ lang }: CalculatorProps) {
                 />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                {/* Condition */}
-                <div>
-                    <label className="block text-sm font-medium text-stone-600 mb-3 uppercase tracking-wider">{t('calc.condition')}</label>
-                    <select
-                        value={condition}
-                        onChange={(e) => setCondition(e.target.value as Condition)}
-                        className="w-full border border-stone-200 rounded-2xl shadow-sm focus:border-cognac focus:ring-cognac py-4 px-5 bg-stone-50/30 text-stone-800"
-                    >
-                        <option value="standard">{t('calc.cond.standard')}</option>
-                        <option value="painted">{t('calc.cond.painted')}</option>
-                        <option value="severe">{t('calc.cond.severe')}</option>
-                    </select>
-                </div>
-
-                {/* Service */}
-                <div>
-                    <label className="block text-sm font-medium text-stone-600 mb-3 uppercase tracking-wider">{t('calc.service')}</label>
-                    <select
-                        value={serviceType}
-                        onChange={(e) => setServiceType(e.target.value as ServiceType)}
-                        className="w-full border border-stone-200 rounded-2xl shadow-sm focus:border-cognac focus:ring-cognac py-4 px-5 bg-stone-50/30 text-stone-800"
-                    >
-                        <option value="sanding_only">{t('calc.serv.sanding_only')}</option>
-                        <option value="sanding_varnish">{t('calc.serv.sanding_varnish')}</option>
-                        <option value="turnkey">{t('calc.serv.turnkey')}</option>
-                    </select>
-                </div>
-            </div>
-
-            {/* Extras - Now informational */}
+            {/* Extras - Informational */}
             <div className="mb-10 space-y-4">
                 <label className="block text-sm font-medium text-stone-600 uppercase tracking-wider">{t('calc.extras')}</label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-start p-4 rounded-2xl bg-stone-50 border border-stone-100">
                         <div className="mt-1 text-cognac mr-3">💡</div>
-                        <p className="text-sm font-medium text-stone-700">
+                        <p className="mt-1 text-sm font-medium text-stone-700">
                             {t('calc.extra.gap')}
                         </p>
                     </div>
                     <div className="flex items-start p-4 rounded-2xl bg-stone-50 border border-stone-100">
                         <div className="mt-1 text-cognac mr-3">💡</div>
-                        <p className="text-sm font-medium text-stone-700">
+                        <p className="mt-1 text-sm font-medium text-stone-700">
                             {t('calc.extra.skirt')}
                         </p>
                     </div>
