@@ -21,20 +21,12 @@ export const POST: APIRoute = async ({ request }) => {
             message = `📞 *Новая заявка*\n\n👤 Имя: ${body.data.name}\n📱 Телефон: ${body.data.phone}\n📍 Источник: ${body.data.source || 'Не указан'}`;
         } else if (body.type === 'calculator_lead') {
             const c = body.data.calculation;
-            const extrasStr = Object.keys(c.extras || {}).filter(k => c.extras[k]).join(', ') || 'Нет';
-
             message = [
                 `🧮 *Расчет на сайте*`,
                 ``,
                 `👤 *Имя:* ${body.data.name}`,
                 `📱 *Телефон:* ${body.data.phone}`,
-                ``,
-                `📝 *Детали:*`,
                 `📐 Площадь: ${c.area} м²`,
-                c.condition ? `🔨 Состояние: ${c.condition}` : null,
-                c.service ? `🔧 Услуга: ${c.service}` : null,
-                `➕ Доп: ${extrasStr}`,
-                ``,
                 `💰 *Итого: ${c.total_price}*`
             ].filter(Boolean).join('\n');
         }
