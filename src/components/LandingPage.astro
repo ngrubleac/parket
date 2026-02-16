@@ -18,8 +18,8 @@ const t = useTranslations(lang);
 
 <Layout
     title={lang === "ru"
-        ? "Циклевка паркета в Кишиневе | ParchetMaster"
-        : "Ciclarea parchetului în Chișinău | ParchetMaster"}
+        ? "Циклевка паркета в Кишиневе без пыли за 1 день | ParchetMaster"
+        : "Șlefuire parchetului în Chișinău fără praf într-o zi | ParchetMaster"}
     lang={lang}
 >
     <Header lang={lang} />
@@ -74,6 +74,13 @@ const t = useTranslations(lang);
             >
             </div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+                <h2
+                    class="text-3xl sm:text-5xl font-serif font-bold text-espresso text-center mb-16"
+                >
+                    {t("features.title")}
+                    <span class="text-cognac">{t("features.title_accent")}</span
+                    >
+                </h2>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
                     <div
                         class="group p-8 bg-white/50 backdrop-blur-sm rounded-[2rem] border border-stone-100 hover:border-cognac/30 hover:bg-white transition-all duration-500 shadow-sm hover:shadow-xl"
@@ -91,7 +98,7 @@ const t = useTranslations(lang);
                         </p>
                     </div>
                     <div
-                        class="group p-8 bg-white/50 rounded-[2rem] border border-stone-100 hover:border-cognac/30 hover:bg-white transition-all duration-500 shadow-sm hover:shadow-xl"
+                        class="group p-8 bg-white/50 backdrop-blur-sm rounded-[2rem] border border-stone-100 hover:border-cognac/30 hover:bg-white transition-all duration-500 shadow-sm hover:shadow-xl"
                     >
                         <div
                             class="text-5xl mb-6 transform transition group-hover:scale-110"
@@ -106,7 +113,7 @@ const t = useTranslations(lang);
                         </p>
                     </div>
                     <div
-                        class="group p-8 bg-white/50 rounded-[2rem] border border-stone-100 hover:border-cognac/30 hover:bg-white transition-all duration-500 shadow-sm hover:shadow-xl"
+                        class="group p-8 bg-white/50 backdrop-blur-smrounded-[2rem] border border-stone-100 hover:border-cognac/30 hover:bg-white transition-all duration-500 shadow-sm hover:shadow-xl"
                     >
                         <div
                             class="text-5xl mb-6 transform transition group-hover:scale-110"
@@ -266,11 +273,11 @@ const t = useTranslations(lang);
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4
+                                    <h3
                                         class="font-serif font-bold text-stone-900 text-xl mb-1"
                                     >
                                         {t("contacts.phone")}
-                                    </h4>
+                                    </h3>
                                     <a
                                         href="tel:+37360588967"
                                         class="text-cognac font-bold text-2xl hover:text-espresso transition-colors"
@@ -305,11 +312,11 @@ const t = useTranslations(lang);
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4
+                                    <h3
                                         class="font-serif font-bold text-stone-900 text-xl mb-1"
                                     >
                                         {t("contacts.location")}
-                                    </h4>
+                                    </h3>
                                     <p class="text-stone-600 text-lg italic">
                                         {t("contacts.location_val")}
                                     </p>
@@ -336,11 +343,11 @@ const t = useTranslations(lang);
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4
+                                    <h3
                                         class="font-serif font-bold text-stone-900 text-xl mb-1"
                                     >
                                         {t("contacts.hours")}
-                                    </h4>
+                                    </h3>
                                     <p class="text-stone-600 text-lg italic">
                                         {t("contacts.hours_val")}
                                     </p>

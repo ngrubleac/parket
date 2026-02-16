@@ -59,9 +59,9 @@ const GalleryGrid: React.FC<Props> = ({ items, lang }) => {
                         </div>
 
                         <div className="absolute inset-0 bg-gradient-to-t from-espresso/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6">
-                            <span className="text-white font-serif font-bold text-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                            <h3 className="text-white font-serif font-bold text-lg transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                                 {item.title}
-                            </span>
+                            </h3>
                         </div>
                     </div>
                 </div>
