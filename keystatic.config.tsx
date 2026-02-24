@@ -21,6 +21,15 @@ export default config({
                 }),
                 author: fields.text({ label: 'Author' }),
                 publishedAt: fields.date({ label: 'Published Date' }),
+                lang: fields.select({
+                    label: 'Language',
+                    options: [
+                        { label: 'Русский', value: 'ru' },
+                        { label: 'Română', value: 'ro' },
+                    ],
+                    defaultValue: 'ru',
+                }),
+                translationKey: fields.text({ label: 'Translation Key (для связи статей)' }),
                 category: fields.select({
                     label: 'Category',
                     options: [

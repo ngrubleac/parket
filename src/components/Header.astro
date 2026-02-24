@@ -1,8 +1,71 @@
 ---
 import { useTranslations } from "../i18n/ui";
+import { getCollection } from 'astro:content';
 
-const { lang = "ru" } = Astro.props;
-const t = useTranslations(lang);
+// Получаем язык из пропсов или определяем из URL
+const { lang: propLang } = Astro.props;
+const url = new URL(Astro.request.url);
+const currentPath = url.pathname;
+
+// Используем prop если есть, иначе определяем из URL
+const lang = propLang || (currentPath.startsWith('/ro') ? 'ro' : 'ru');
+const t = useTranslations(lang as 'ru' | 'ro');
+
+const isBlog = currentPath.startsWith('/blog');
+
+// Получаем все посты для маппинга переводов
+const allPosts = await getCollection('blog');
+
+// Функция для получения ссылки на другую языковую версию
+function getLangLink(targetLang: string) {
+    // Если целевой язык совпадает с текущим, остаёмся на текущей странице
+    if (targetLang === lang) {
+        return currentPath;
+    }
+    
+    if (isBlog) {
+        // Для блога с постом - ищем перевод по translationKey
+        const match = currentPath.match(/^\/blog\/(ru|ro)\/(.+)$/);
+        if (match) {
+            const currentSlug = match[2];
+            const currentPost = allPosts.find(p => p.slug === currentSlug);
+            
+            if (currentPost && currentPost.data.translationKey) {
+                // Ищем пост с тем же translationKey но другим языком
+                const translatedPost = allPosts.find(
+                    p => p.data.translationKey === currentPost.data.translationKey && 
+                         p.data.lang === targetLang
+                );
+                
+                if (translatedPost) {
+                    return `/blog/${targetLang}/${translatedPost.slug}`;
+                }
+            }
+            
+            // Если перевода нет, просто меняем язык в URL
+            return `/blog/${targetLang}/${currentSlug}`;
+        }
+        
+        // Для списка постов
+        return `/blog/${targetLang}`;
+    } else if (targetLang === 'ro') {
+        // Для RO версии лендинга
+        return currentPath === '/ro' || currentPath.startsWith('/ro/') ? currentPath : `/ro${currentPath}`;
+    } else {
+        // Для RU версии лендинга
+        return currentPath.replace(/^\/ro/, '');
+    }
+}
+
+// Ссылки навигации
+const navLinks = [
+    { href: lang === "ro" ? "/ro#services" : "/#services", label: t("nav.services") },
+    { href: lang === "ro" ? "/ro#gallery" : "/#gallery", label: t("nav.gallery") },
+    { href: lang === "ro" ? "/ro#reviews" : "/#reviews", label: t("nav.reviews") },
+    { href: lang === "ro" ? "/blog/ro" : "/blog/ru", label: t("nav.blog") },
+    { href: lang === "ro" ? "/ro#calculator" : "/#calculator", label: t("nav.calculator") },
+    { href: lang === "ro" ? "/ro#contacts" : "/#contacts", label: t("nav.contacts") },
+];
 ---
 
 <header class="bg-white shadow-sm sticky top-0 z-50">
@@ -16,73 +79,119 @@ const t = useTranslations(lang);
           ParchetMaster
         </a>
       </div>
-      <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
-        <a
-          href="#services"
-          class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
-        >
-          {t("nav.services")}
-        </a>
-        <a
-          href="#gallery"
-          class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
-        >
-          {t("nav.gallery")}
-        </a>
-        <a
-          href="#reviews"
-          class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
-        >
-          {t("nav.reviews")}
-        </a>
-        <a
-          href="#faq"
-          class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
-        >
-          FAQ
-        </a>
-        <a
-          href="#calculator"
-          class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
-        >
-          {t("nav.calculator")}
-        </a>
-        <a
-          href="#contacts"
-          class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
-        >
-          {t("nav.contacts")}
-        </a>
+      
+      <!-- Desktop Navigation -->
+      <div class="hidden md:ml-6 md:flex md:space-x-8">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class="text-gray-900 hover:text-cognac px-3 py-2 rounded-md text-sm font-bold"
+          >
+            {link.label}
+          </a>
+        ))}
       </div>
+      
+      <!-- Right side buttons -->
       <div class="flex items-center space-x-3 sm:space-x-4">
-        <a
-          href="#calculator"
-          class="hidden md:block border-2 border-cognac text-cognac px-4 py-2 rounded-lg text-sm font-bold hover:bg-cognac/10 transition"
-        >
-          {t("header.request_cta")}
-        </a>
+        <!-- Language switcher -->
+        <div class="hidden sm:flex space-x-1 text-sm font-medium">
+          <a
+            href={getLangLink('ru')}
+            class={lang === "ru"
+              ? "text-cognac font-bold"
+              : "text-gray-500 hover:text-gray-900"}>RU</a
+          >
+          <span class="text-gray-300">|</span>
+          <a
+            href={getLangLink('ro')}
+            class={lang === "ro"
+              ? "text-cognac font-bold"
+              : "text-gray-500 hover:text-gray-900"}>RO</a
+          >
+        </div>
+        
+        <!-- Phone CTA -->
         <a
           href="tel:+37360588967"
           class="bg-cognac text-white px-4 py-2 rounded-lg text-sm font-bold hover:brightness-110 transition"
         >
           {t("header.phone_cta")}
         </a>
-        <div class="flex space-x-1 text-sm font-medium">
-          <a
-            href="/"
-            class={lang === "ru"
-              ? "text-cognac"
-              : "text-gray-500 hover:text-gray-900"}>RU</a
-          >
-          <span class="text-gray-300">|</span>
-          <a
-            href="/ro"
-            class={lang === "ro"
-              ? "text-cognac"
-              : "text-gray-500 hover:text-gray-900"}>RO</a
-          >
-        </div>
+        
+        <!-- Mobile menu button -->
+        <button
+          id="mobile-menu-button"
+          class="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100 transition"
+          aria-label="Toggle menu"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path id="menu-icon-path" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
     </div>
   </div>
+  
+  <!-- Mobile Navigation -->
+  <nav id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white">
+    <div class="px-4 py-4 space-y-3">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class="block text-gray-900 hover:text-cognac hover:bg-cognac/5 px-4 py-3 rounded-lg text-base font-bold transition"
+        >
+          {link.label}
+        </a>
+      ))}
+      
+      <!-- Mobile language switcher -->
+      <div class="pt-4 mt-4 border-t border-gray-100 flex items-center justify-center space-x-4 text-sm font-medium">
+        <span class="text-gray-500">Language:</span>
+        <a
+          href={getLangLink('ru')}
+          class={lang === "ru"
+            ? "text-cognac font-bold"
+            : "text-gray-500 hover:text-gray-900"}>RU</a
+        >
+        <span class="text-gray-300">|</span>
+        <a
+          href={getLangLink('ro')}
+          class={lang === "ro"
+            ? "text-cognac font-bold"
+            : "text-gray-500 hover:text-gray-900"}>RO</a
+        >
+      </div>
+    </div>
+  </nav>
 </header>
+
+<script>
+  // Mobile menu toggle
+  const menuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuIconPath = document.getElementById('menu-icon-path');
+  
+  let isMenuOpen = false;
+  
+  menuButton?.addEventListener('click', () => {
+    isMenuOpen = !isMenuOpen;
+    mobileMenu?.classList.toggle('hidden');
+    
+    // Change icon between hamburger and X
+    if (isMenuOpen) {
+      menuIconPath?.setAttribute('d', 'M6 18L18 6M6 6l12 12');
+    } else {
+      menuIconPath?.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+    }
+  });
+  
+  // Close menu when clicking on a link
+  mobileMenu?.querySelectorAll('a').forEach((link) => {
+    link.addEventListener('click', () => {
+      isMenuOpen = false;
+      mobileMenu?.classList.add('hidden');
+      menuIconPath?.setAttribute('d', 'M4 6h16M4 12h16M4 18h16');
+    });
+  });
+</script>

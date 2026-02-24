@@ -1,7 +1,14 @@
 ---
 import { useTranslations } from "../i18n/ui";
-const { lang = "ru" } = Astro.props;
-const t = useTranslations(lang);
+
+// Получаем язык из пропсов или определяем из URL
+const { lang: propLang } = Astro.props;
+const url = new URL(Astro.request.url);
+const currentPath = url.pathname;
+
+// Используем prop если есть, иначе определяем из URL
+const lang = propLang || (currentPath.startsWith('/ro') ? 'ro' : 'ru');
+const t = useTranslations(lang as 'ru' | 'ro');
 ---
 
 <footer class="bg-gray-900 text-white py-12" id="contacts">

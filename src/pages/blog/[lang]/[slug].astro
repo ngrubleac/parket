@@ -1,0 +1,306 @@
+---
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import { getCollection } from 'astro:content';
+import { useTranslations } from "../../../i18n/ui";
+
+export async function getStaticPaths() {
+    const allPosts = await getCollection('blog');
+    
+    return allPosts.map((post) => ({
+        params: { lang: post.data.lang, slug: post.slug },
+        props: { post },
+    }));
+}
+
+const { lang, slug } = Astro.params;
+const { post } = Astro.props;
+const t = useTranslations(lang as 'ru' | 'ro');
+
+// Форматирование даты
+const formattedDate = new Date(post.data.publishedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+});
+
+// Категории
+const categories = {
+    ru: { tips: '💡 Советы', process: '⚙️ Процесс', faq: '❓ Вопросы' },
+    ro: { tips: '💡 Sfaturi', process: '⚙️ Proces', faq: '❓ Întrebări' },
+}[lang as 'ru' | 'ro'];
+
+// Schema.org разметка
+const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": post.data.title,
+    "description": post.data.description,
+    "author": {
+        "@type": "Person",
+        "name": post.data.author
+    },
+    "datePublished": post.data.publishedAt,
+    "inLanguage": lang,
+    "image": post.data.image ? `https://parchetmaster.vercel.app${post.data.image}` : undefined
+};
+
+// Рендерим контент
+const { Content } = await post.render();
+---
+
+<html lang={lang}>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{post.data.title} | ParchetMaster</title>
+    <meta name="description" content={post.data.description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+</head>
+<body class="font-sans antialiased text-stone-900 bg-[#fdfcfb] relative selection:bg-amber-200">
+    <Header lang={lang} />
+
+    <main>
+        <article class="max-w-4xl mx-auto px-4 py-12">
+            <!-- Навигация назад -->
+            <a href={`/blog/${lang}`} class="inline-flex items-center gap-2 text-stone-500 hover:text-cognac transition mb-8">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                {t("blog.back")}
+            </a>
+
+            <!-- Заголовок -->
+            <header class="mb-8">
+                <div class="flex flex-wrap gap-3 mb-4">
+                    <span class="bg-cognac/10 text-cognac px-3 py-1 rounded-full text-xs font-bold uppercase">
+                        {categories[post.data.category as keyof typeof categories] || post.data.category}
+                    </span>
+                    {post.data.tags?.map((tag) => (
+                        <span class="bg-stone-100 text-stone-600 px-3 py-1 rounded-full text-xs">#{tag}</span>
+                    ))}
+                </div>
+                
+                <h1 class="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-espresso mb-6 leading-tight">
+                    {post.data.title}
+                </h1>
+                
+                <p class="text-xl text-stone-600 leading-relaxed mb-6">{post.data.description}</p>
+
+                <!-- Мета информация -->
+                <div class="flex flex-wrap items-center gap-6 text-sm text-stone-500 pb-6 border-b border-stone-200">
+                    <span class="flex items-center gap-2">
+                        <div class="w-10 h-10 rounded-full bg-cognac/20 flex items-center justify-center text-cognac font-bold">
+                            {post.data.author.charAt(0)}
+                        </div>
+                        <span class="font-medium text-stone-700">{post.data.author}</span>
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        {formattedDate}
+                    </span>
+                    <span class="flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        ~5 {lang === 'ru' ? 'мин чтения' : 'min de citit'}
+                    </span>
+                </div>
+            </header>
+
+            <!-- Обложка -->
+            {post.data.image && (
+                <figure class="mb-10">
+                    <img
+                        src={post.data.image}
+                        alt={post.data.title}
+                        class="w-full aspect-[16/9] object-cover rounded-2xl shadow-lg"
+                        loading="eager"
+                    />
+                </figure>
+            )}
+
+            <!-- Контент статьи -->
+            <div class="prose prose-lg max-w-none">
+                <Content />
+            </div>
+
+            <!-- Теги -->
+            {post.data.tags && post.data.tags.length > 0 && (
+                <div class="mt-10 pt-6 border-t border-stone-200">
+                    <p class="text-sm text-stone-500 mb-3">{t("blog.tags")}:</p>
+                    <div class="flex flex-wrap gap-2">
+                        {post.data.tags.map((tag) => (
+                            <span class="bg-stone-100 text-stone-600 px-3 py-1 rounded-full text-sm hover:bg-cognac/10 hover:text-cognac transition cursor-pointer">#{tag}</span>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            <!-- CTA в конце статьи -->
+            <div class="mt-12 p-8 bg-gradient-to-br from-cognac/10 to-walnut/10 rounded-3xl border border-cognac/20 text-center">
+                <h3 class="text-2xl font-serif font-bold text-espresso mb-3">
+                    {lang === 'ru' ? 'Остались вопросы?' : 'Aveți întrebări?'}
+                </h3>
+                <p class="text-stone-600 mb-6">
+                    {lang === 'ru' 
+                        ? 'Бесплатно проконсультируем и поможем выбрать решение для вашего паркета'
+                        : 'Vă vom consulta gratuit și vă vom ajuta să alegeți soluția pentru parchetul dvs.'
+                    }
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a
+                        href="tel:+37360588967"
+                        class="bg-cognac text-white px-8 py-4 rounded-2xl font-bold hover:brightness-110 transition inline-flex items-center justify-center gap-2"
+                    >
+                        📞 +373 60 588 967
+                    </a>
+                    <a
+                        href="https://wa.me/37360588967"
+                        class="bg-[#25D366] text-white px-8 py-4 rounded-2xl font-bold hover:brightness-110 transition inline-flex items-center justify-center gap-2"
+                    >
+                        💬 WhatsApp
+                    </a>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <Footer lang={lang} />
+    
+    <!-- Global Grain Texture Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
+</body>
+</html>
+
+<style>
+    :global(.prose) {
+        font-family: 'Lora', serif;
+        line-height: 1.8;
+        color: #292524;
+        max-width: 100%;
+        overflow-x: auto;
+    }
+    :global(.prose h1) { font-size: 2.5rem; font-weight: 700; margin-bottom: 1.5rem; color: #1a120b; line-height: 1.2; }
+    :global(.prose h2) { font-size: 1.875rem; font-weight: 600; margin-top: 2.5rem; margin-bottom: 1rem; color: #1a120b; line-height: 1.3; }
+    :global(.prose h3) { font-size: 1.5rem; font-weight: 600; margin-top: 2rem; margin-bottom: 0.75rem; color: #1a120b; line-height: 1.4; }
+    :global(.prose h4) { font-size: 1.25rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.5rem; color: #1a120b; }
+    :global(.prose p) { margin-bottom: 1.25rem; font-size: 1.125rem; line-height: 1.8; }
+    :global(.prose ul), :global(.prose ol) { margin-bottom: 1.25rem; padding-left: 1.5rem; }
+    :global(.prose ul) { list-style-type: disc; }
+    :global(.prose ol) { list-style-type: decimal; }
+    :global(.prose li) { margin-bottom: 0.5rem; line-height: 1.7; }
+    :global(.prose li > ul), :global(.prose li > ol) { margin-top: 0.5rem; margin-bottom: 0; }
+    :global(.prose strong) { font-weight: 600; color: #1a120b; }
+    :global(.prose em) { font-style: italic; }
+    :global(.prose a) { color: #438200; text-decoration: underline; text-underline-offset: 2px; transition: color 0.2s; }
+    :global(.prose a:hover) { color: #3d2b1f; }
+    :global(.prose hr) { border: none; border-top: 2px solid #e7e5e4; margin: 2.5rem 0; }
+    
+    /* Таблицы */
+    :global(.prose table) { 
+        width: 100%; 
+        margin: 2rem 0; 
+        border-collapse: collapse; 
+        font-family: 'Inter', sans-serif; 
+        font-size: 1rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        border-radius: 12px;
+        overflow: hidden;
+    }
+    :global(.prose thead th) { 
+        background: #5B3A29; 
+        color: white; 
+        padding: 1rem 1.25rem; 
+        text-align: left; 
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    :global(.prose tbody td) { 
+        padding: 1rem 1.25rem; 
+        border-bottom: 1px solid #e7e5e4;
+        line-height: 1.6;
+    }
+    :global(.prose tbody tr) { transition: background-color 0.2s; }
+    :global(.prose tbody tr:nth-child(odd)) { background: #fdfcfb; }
+    :global(.prose tbody tr:nth-child(even)) { background: #f5ebe4; }
+    :global(.prose tbody tr:hover) { background: #e8d5c5; }
+    :global(.prose tbody tr:last-child td) { border-bottom: none; }
+    
+    /* Адаптивность таблиц */
+    @media (max-width: 768px) {
+        :global(.prose table) {
+            font-size: 0.875rem;
+        }
+        :global(.prose thead th),
+        :global(.prose tbody td) {
+            padding: 0.75rem 0.5rem;
+        }
+    }
+    
+    /* Блок кода */
+    :global(.prose pre) {
+        background: #f5ebe4;
+        color: #292524;
+        padding: 1.5rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 1.5rem 0;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        line-height: 1.8;
+        border: 1px solid #e7e5e4;
+    }
+    :global(.prose code) {
+        background: #f5ebe4;
+        color: #5B3A29;
+        padding: 0.2rem 0.5rem;
+        border-radius: 4px;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9em;
+    }
+    :global(.prose pre code) {
+        background: transparent;
+        color: inherit;
+        padding: 0;
+    }
+    
+    /* Схемы и диаграммы */
+    :global(.prose pre:has(> code)) {
+        background: linear-gradient(135deg, #f9f7f5 0%, #f5ebe4 100%);
+        border-left: 4px solid #438200;
+        font-family: 'Inter', sans-serif;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+    
+    /* Цитаты */
+    :global(.prose blockquote) {
+        border-left: 4px solid #438200;
+        padding-left: 1.5rem;
+        margin: 1.5rem 0;
+        font-style: italic;
+        color: #57534e;
+        background: #f9f7f5;
+        padding: 1rem 1.5rem;
+        border-radius: 0 8px 8px 0;
+    }
+    
+    /* Изображения */
+    :global(.prose img) {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        margin: 1.5rem 0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+</style>

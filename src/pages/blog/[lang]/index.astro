@@ -1,0 +1,179 @@
+---
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+import { getCollection } from 'astro:content';
+import { useTranslations } from "../../../i18n/ui";
+
+export async function getStaticPaths() {
+    return [
+        { params: { lang: 'ru' } },
+        { params: { lang: 'ro' } },
+    ];
+}
+
+const { lang } = Astro.params;
+const allPosts = await getCollection('blog');
+
+// Фильтруем посты по языку
+const posts = allPosts.filter(post => post.data.lang === lang);
+
+// Сортировка по дате публикации (новые первее)
+const sortedPosts = posts.sort((a, b) => {
+    return new Date(b.data.publishedAt).getTime() - new Date(a.data.publishedAt).getTime();
+});
+
+const t = useTranslations(lang as 'ru' | 'ro');
+
+// Категории
+const categories = {
+    ru: { tips: 'Советы', process: 'Процесс', faq: 'Вопросы' },
+    ro: { tips: 'Sfaturi', process: 'Proces', faq: 'Întrebări' },
+}[lang as 'ru' | 'ro'];
+---
+
+<html lang={lang}>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>{lang === 'ru' ? "Блог | ParchetMaster" : "Blog | ParchetMaster"}</title>
+    <meta name="description" content={lang === 'ru' 
+        ? "Полезные статьи о реставрации, циклевке и уходе за паркетом в Кишиневе"
+        : "Articole utile despre restaurarea, ciclarea și îngrijirea parchetului în Chișinău"
+    } />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    />
+</head>
+<body class="font-sans antialiased text-stone-900 bg-[#fdfcfb] relative selection:bg-amber-200">
+    <Header lang={lang} />
+
+    <main>
+        <!-- Hero секция блога -->
+        <section class="bg-[#5B3A29] py-16 px-4">
+            <div class="max-w-4xl mx-auto text-center text-white">
+                <h1 class="text-4xl sm:text-5xl font-serif font-bold mb-6">
+                    {t("blog.title")}
+                    <span class="text-cognac italic"> {t("blog.title_accent")}</span>
+                </h1>
+                <p class="text-xl text-stone-300 max-w-2xl mx-auto">
+                    {t("blog.subtitle")}
+                </p>
+            </div>
+        </section>
+
+        <!-- Список статей -->
+        <section class="py-16 px-4 bg-parchment">
+            <div class="max-w-6xl mx-auto">
+                {sortedPosts.length === 0 ? (
+                    <div class="text-center py-20">
+                        <p class="text-stone-500 text-lg italic">{t("blog.empty")}</p>
+                    </div>
+                ) : (
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {sortedPosts.map((post) => (
+                            <article class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group">
+                                <!-- Обложка -->
+                                <a href={`/blog/${lang}/${post.slug}`} class="block overflow-hidden aspect-[16/10] relative">
+                                    {post.data.image ? (
+                                        <img
+                                            src={post.data.image}
+                                            alt={post.data.title}
+                                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
+                                            loading="lazy"
+                                        />
+                                    ) : (
+                                        <div class="w-full h-full bg-gradient-to-br from-cognac/20 to-walnut/20 flex items-center justify-center">
+                                            <svg class="w-16 h-16 text-cognac/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                                            </svg>
+                                        </div>
+                                    )}
+                                    <div class="absolute top-4 left-4 bg-cognac text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
+                                        {categories[post.data.category as keyof typeof categories] || post.data.category}
+                                    </div>
+                                </a>
+
+                                <!-- Контент -->
+                                <div class="p-6">
+                                    <h2 class="text-xl font-bold text-espresso mb-3 line-clamp-2">
+                                        <a href={`/blog/${lang}/${post.slug}`} class="hover:text-cognac transition-colors">
+                                            {post.data.title}
+                                        </a>
+                                    </h2>
+                                    <p class="text-stone-600 text-sm mb-4 line-clamp-3">
+                                        {post.data.description}
+                                    </p>
+
+                                    <!-- Мета -->
+                                    <div class="flex items-center justify-between text-xs text-stone-500">
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                            {new Date(post.data.publishedAt).toLocaleDateString(lang === 'ru' ? 'ru-RU' : 'ro-RO', { day: 'numeric', month: 'long' })}
+                                        </span>
+                                        <span class="flex items-center gap-1">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                            {post.data.author}
+                                        </span>
+                                    </div>
+
+                                    <!-- Читать далее -->
+                                    <a
+                                        href={`/blog/${lang}/${post.slug}`}
+                                        class="mt-4 inline-flex items-center gap-2 text-cognac font-bold text-sm hover:gap-3 transition-all"
+                                    >
+                                        {t("blog.read_more")}
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </a>
+                                </div>
+                            </article>
+                        ))}
+                    </div>
+                )}
+            </div>
+        </section>
+
+        <!-- CTA секция -->
+        <section class="py-16 px-4 bg-white">
+            <div class="max-w-4xl mx-auto text-center">
+                <h2 class="text-3xl font-serif font-bold text-espresso mb-4">
+                    {lang === 'ru' ? 'Нужна консультация по паркету?' : 'Aveți nevoie de consultație?'}
+                </h2>
+                <p class="text-stone-600 mb-8">
+                    {lang === 'ru' 
+                        ? 'Бесплатно ответим на все вопросы и поможем выбрать решение'
+                        : 'Vă vom răspunde gratuit la toate întrebările și vă vom ajuta să alegeți soluția'
+                    }
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a
+                        href="tel:+37360588967"
+                        class="bg-cognac text-white px-8 py-4 rounded-2xl font-bold hover:brightness-110 transition"
+                    >
+                        📞 +373 60 588 967
+                    </a>
+                    <a
+                        href="/#calculator"
+                        class="border-2 border-cognac text-cognac px-8 py-4 rounded-2xl font-bold hover:bg-cognac/10 transition"
+                    >
+                        {lang === 'ru' ? '🧮 Рассчитать стоимость' : '🧮 Calculează prețul'}
+                    </a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <Footer lang={lang} />
+    
+    <!-- Global Grain Texture Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-[0.03] z-[9999] bg-[url('https://www.transparenttextures.com/patterns/dark-matter.png')]"></div>
+</body>
+</html>
