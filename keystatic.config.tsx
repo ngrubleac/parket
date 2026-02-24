@@ -5,6 +5,44 @@ export default config({
         kind: 'local',
     },
     collections: {
+        blog: collection({
+            label: 'Blog',
+            slugField: 'slug',
+            path: 'src/content/blog/*',
+            format: { contentField: 'content' },
+            schema: {
+                slug: fields.slug({ name: { label: 'Post Slug (URL)' } }),
+                title: fields.text({ label: 'Title' }),
+                description: fields.text({ label: 'Description (SEO Meta)' }),
+                image: fields.image({
+                    label: 'Cover Image',
+                    directory: 'public/images/blog',
+                    publicPath: '/images/blog/',
+                }),
+                author: fields.text({ label: 'Author' }),
+                publishedAt: fields.date({ label: 'Published Date' }),
+                category: fields.select({
+                    label: 'Category',
+                    options: [
+                        { label: 'Советы', value: 'tips' },
+                        { label: 'Процесс', value: 'process' },
+                        { label: 'Вопросы', value: 'faq' },
+                    ],
+                    defaultValue: 'tips',
+                }),
+                tags: fields.array(fields.text({ label: 'Tag' }), {
+                    label: 'Tags',
+                    itemLabel: (props) => props.value,
+                }),
+                content: fields.document({
+                    label: 'Content',
+                    formatting: true,
+                    dividers: true,
+                    links: true,
+                    images: true,
+                }),
+            },
+        }),
         services: collection({
             label: 'Services',
             slugField: 'title',
