@@ -26,6 +26,14 @@ const {
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
+		{/* SEO Meta Tags */}
+		<meta name="keywords" content={lang === 'ro' 
+			? "șlefuire parchet Chișinău, ciclare parchet, restaurare parchet, lăcuire parchet, preț șlefuire parchet"
+			: "циклевка паркета Кишинев, шлифовка паркета, реставрация паркета, лакировка паркета, цена циклевки"} 
+		/>
+		<meta name="author" content="ParchetMaster" />
+		<meta name="robots" content="index, follow" />
+
 		{/* Structured Data - WebSite */}
 		<script type="application/ld+json" is:inline>
 			{
@@ -131,6 +139,8 @@ const {
 		<meta property="og:url" content={Astro.url} />
 		<meta property="og:title" content={title} />
 		<meta property="og:description" content={description} />
+		<meta property="og:locale" content={lang === 'ro' ? 'ro_RO' : 'ru_MD'} />
+		<meta property="og:site_name" content="ParchetMaster" />
 		<meta
 			property="og:image"
 			content="https://parchetmaster.vercel.app/parquet_header.webp"
