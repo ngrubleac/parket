@@ -28,15 +28,16 @@ export default config({
             path: 'src/content/gallery/*',
             schema: {
                 title: fields.slug({ name: { label: 'Project Title' } }),
+                description: fields.text({ label: 'Description (optional)' }),
                 beforeImage: fields.image({
                     label: 'Before Image',
-                    directory: 'public/images/gallery',
-                    publicPath: '/images/gallery',
+                    directory: 'src/content/gallery/*/images',
+                    publicPath: '/@fs/src/content/gallery/',
                 }),
                 afterImage: fields.image({
                     label: 'After Image',
-                    directory: 'public/images/gallery',
-                    publicPath: '/images/gallery',
+                    directory: 'src/content/gallery/*/images',
+                    publicPath: '/@fs/src/content/gallery/',
                 }),
             },
         }),

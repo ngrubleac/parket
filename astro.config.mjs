@@ -7,7 +7,8 @@ import sitemap from '@astrojs/sitemap';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://parchetmaster.vercel.app', // Замените на ваш реальный домен
+  site: 'https://parchetmaster.vercel.app',
+  compressHTML: true,
   adapter: vercel(),
   integrations: [
     tailwind(),
@@ -21,6 +22,11 @@ export default defineConfig({
     locales: ['ru', 'ro'],
     routing: {
       prefixDefaultLocale: false
+    }
+  },
+  image: {
+    service: {
+      entrypoint: 'astro/assets/services/sharp'
     }
   }
 });

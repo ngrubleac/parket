@@ -1,3 +1,4 @@
 title: '2'
-beforeImage: /images/gallery/2/beforeImage.jpeg
-afterImage: /images/gallery/2/afterImage.jpeg
+description: 'Шлифовка и лакировка паркета'
+beforeImage: ./images/beforeImage.jpeg
+afterImage: ./images/afterImage.jpeg

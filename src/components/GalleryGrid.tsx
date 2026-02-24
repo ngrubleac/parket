@@ -5,6 +5,7 @@ import { ui } from '../i18n/ui';
 interface GalleryItem {
     id: string;
     title: string;
+    description?: string;
     beforeImage: string;
     afterImage: string;
 }
@@ -28,7 +29,7 @@ const GalleryGrid: React.FC<Props> = ({ items, lang }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {items.map((item) => (
+            {items.map((item, index) => (
                 <div
                     key={item.id}
                     className="group relative bg-white rounded-[2rem] overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer border border-stone-100 flex flex-col"
@@ -39,8 +40,10 @@ const GalleryGrid: React.FC<Props> = ({ items, lang }) => {
                         <div className="relative overflow-hidden h-full">
                             <img
                                 src={item.beforeImage}
-                                alt="Before"
+                                alt={t('gallery.before')}
+                                loading={index === 0 ? 'eager' : 'lazy'}
                                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                decoding="async"
                             />
                             <div className="absolute top-3 left-3 bg-espresso/60 backdrop-blur-md text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider border border-white/10">
                                 {t('gallery.before')}
@@ -50,8 +53,10 @@ const GalleryGrid: React.FC<Props> = ({ items, lang }) => {
                         <div className="relative overflow-hidden h-full">
                             <img
                                 src={item.afterImage}
-                                alt="After"
+                                alt={t('gallery.after')}
+                                loading="lazy"
                                 className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                                decoding="async"
                             />
                             <div className="absolute top-3 right-3 bg-cognac text-white px-3 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider shadow-lg">
                                 {t('gallery.after')}

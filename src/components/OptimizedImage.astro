@@ -1,0 +1,23 @@
+---
+import { Image } from 'astro:assets';
+
+interface Props {
+    src: string;
+    alt: string;
+    className?: string;
+    priority?: boolean;
+    widths?: number[];
+}
+
+const { src, alt, className = '', priority = false, widths = [400, 800, 1200, 1600] } = Astro.props;
+---
+
+<Image
+    src={src}
+    alt={alt}
+    class={className}
+    loading={priority ? 'eager' : 'lazy'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    widths={widths}
+    format="avif"
+/>

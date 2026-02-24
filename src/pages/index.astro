@@ -9,6 +9,7 @@ const rawGalleryItems = await reader.collections.gallery.all();
 const galleryItems = rawGalleryItems.map((item: any) => ({
   id: item.slug,
   title: item.entry.title,
+  description: item.entry.description,
   beforeImage: item.entry.beforeImage,
   afterImage: item.entry.afterImage,
 }));
