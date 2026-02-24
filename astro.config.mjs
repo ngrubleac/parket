@@ -14,7 +14,15 @@ export default defineConfig({
     tailwind(),
     react(),
     keystatic(),
-    sitemap()
+    sitemap({
+      changefreq: 'monthly',
+      priority: 0.7,
+      lastmod: new Date(),
+      i18n: {
+        defaultLocale: 'ru',
+        locales: { ru: 'ru', ro: 'ro' }
+      }
+    })
   ],
   output: 'static',
   i18n: {
