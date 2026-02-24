@@ -29,16 +29,8 @@ export default config({
             schema: {
                 title: fields.slug({ name: { label: 'Project Title' } }),
                 description: fields.text({ label: 'Description (optional)' }),
-                beforeImage: fields.image({
-                    label: 'Before Image',
-                    directory: 'src/content/gallery/*/images',
-                    publicPath: '/@fs/src/content/gallery/',
-                }),
-                afterImage: fields.image({
-                    label: 'After Image',
-                    directory: 'src/content/gallery/*/images',
-                    publicPath: '/@fs/src/content/gallery/',
-                }),
+                beforeImage: fields.text({ label: 'Before Image Path' }),
+                afterImage: fields.text({ label: 'After Image Path' }),
             },
         }),
     },

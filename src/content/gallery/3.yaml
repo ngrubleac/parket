@@ -1,4 +1,4 @@
 title: '3'
 description: 'Полная реставрация старого паркета'
-beforeImage: ./images/beforeImage.jpg
-afterImage: ./images/afterImage.jpg
+beforeImage: '/images/gallery/3/beforeImage.jpg'
+afterImage: '/images/gallery/3/afterImage.jpg'

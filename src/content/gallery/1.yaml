@@ -1,4 +1,4 @@
 title: '1'
 description: 'Реставрация паркета в жилом помещении'
-beforeImage: ./images/beforeImage.jpg
-afterImage: ./images/afterImage.jpeg
+beforeImage: '/images/gallery/1/beforeImage.jpg'
+afterImage: '/images/gallery/1/afterImage.jpeg'
