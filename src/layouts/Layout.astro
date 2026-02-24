@@ -26,13 +26,77 @@ const {
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
-		{/* Structured Data */}
+		{/* Structured Data - WebSite */}
 		<script type="application/ld+json" is:inline>
 			{
 				"@context": "https://schema.org",
 				"@type": "WebSite",
 				"name": "ParchetMaster",
 				"url": "https://parchetmaster.vercel.app/"
+			}
+		</script>
+
+		{/* Structured Data - LocalBusiness */}
+		<script type="application/ld+json" is:inline>
+			{
+				"@context": "https://schema.org",
+				"@type": "LocalBusiness",
+				"name": "ParchetMaster",
+				"image": "https://parchetmaster.vercel.app/parquet_header.webp",
+				"telephone": "+37360588967",
+				"address": {
+					"@type": "PostalAddress",
+					"addressLocality": "Chișinău",
+					"addressCountry": "MD"
+				},
+				"openingHours": "Mo-Su 00:00-23:59",
+				"priceRange": "MDL",
+				"description": {
+					"ru": "Профессиональная циклевка, шлифовка и реставрация паркета в Кишиневе",
+					"ro": "Ciclare profesională, șlefuire și restaurare parchet în Chișinău"
+				},
+				"sameAs": [
+					"https://wa.me/37360588967",
+					"viber://chat?number=37360588967"
+				],
+				"areaServed": {
+					"@type": "City",
+					"name": "Chișinău"
+				},
+				"hasOfferCatalog": {
+					"@type": "OfferCatalog",
+					"name": "Servicii de restaurare parchet",
+					"itemListElement": [
+						{
+							"@type": "Offer",
+							"itemOffered": {
+								"@type": "Service",
+								"name": "Ciclare parchet / Циклевка паркета"
+							}
+						},
+						{
+							"@type": "Offer",
+							"itemOffered": {
+								"@type": "Service",
+								"name": "Șlefuire parchet / Шлифовка паркета"
+							}
+						},
+						{
+							"@type": "Offer",
+							"itemOffered": {
+								"@type": "Service",
+								"name": "Lăcuire parchet / Лакировка паркета"
+							}
+						},
+						{
+							"@type": "Offer",
+							"itemOffered": {
+								"@type": "Service",
+								"name": "Reparație parchet / Ремонт паркета"
+							}
+						}
+					]
+				}
 			}
 		</script>
 
