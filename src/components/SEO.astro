@@ -1,0 +1,106 @@
+---
+import { SITE_URL, SITE_NAME, PHONE_NUMBER } from "../config";
+import { useTranslations } from "../i18n/ui";
+
+interface Props {
+    title: string;
+    description: string;
+    lang: string;
+    image?: string;
+    type?: string;
+}
+
+const {
+    title,
+    description,
+    lang,
+    image = "/parquet_header.webp",
+    type = "website",
+} = Astro.props;
+
+const t = useTranslations(lang as any);
+const canonicalURL = new URL(Astro.url.pathname, SITE_URL);
+const fullImageURL = new URL(image, SITE_URL);
+
+// Hreflang logic
+const baseSlug = Astro.url.pathname.replace(/^\/ro/, "") || "/";
+const ruUrl = new URL(baseSlug, SITE_URL).href;
+const roUrl = new URL(`/ro${baseSlug}`, SITE_URL).href;
+---
+
+<!-- Canonical -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- Alternate Languages -->
+<link rel="alternate" hreflang="ru" href={ruUrl} />
+<link rel="alternate" hreflang="ro" href={roUrl} />
+<link rel="alternate" hreflang="x-default" href={ruUrl} />
+
+<!-- Primary Meta Tags -->
+<title>{title}</title>
+<meta name="title" content={title} />
+<meta name="description" content={description} />
+<meta
+    name="keywords"
+    content={lang === "ro"
+        ? "șlefuire parchet Chișinău, ciclare parchet, restaurare parchet, lăcuire parchet, preț șlefuire parchet"
+        : "циклевка паркета Кишинев, шлифовка паркета, реставрация паркета, лакировка паркета, цена циклевки"}
+/>
+<meta name="author" content={SITE_NAME} />
+<meta name="robots" content="index, follow" />
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content={type} />
+<meta property="og:url" content={Astro.url} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:image" content={fullImageURL} />
+<meta property="og:locale" content={lang === "ro" ? "ro_RO" : "ru_MD"} />
+<meta property="og:site_name" content={SITE_NAME} />
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image" />
+<meta property="twitter:url" content={Astro.url} />
+<meta property="twitter:title" content={title} />
+<meta property="twitter:description" content={description} />
+<meta property="twitter:image" content={fullImageURL} />
+
+<!-- Structured Data - WebSite -->
+<script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: SITE_URL,
+    })}
+/>
+
+<!-- Structured Data - LocalBusiness -->
+<script
+    type="application/ld+json"
+    is:inline
+    set:html={JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        name: SITE_NAME,
+        image: fullImageURL,
+        telephone: PHONE_NUMBER,
+        address: {
+            "@type": "PostalAddress",
+            addressLocality: "Chișinău",
+            addressCountry: "MD",
+        },
+        openingHours: "Mo-Su 00:00-23:59",
+        priceRange: "MDL",
+        description: {
+            ru: "Профессиональная циклевка, шлифовка и реставрация паркета в Кишиневе",
+            ro: "Ciclare profesională, șlefuire și restaurare parchet în Chișinău",
+        },
+        areaServed: {
+            "@type": "City",
+            name: "Chișinău",
+        },
+    })}
+/>

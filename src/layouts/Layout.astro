@@ -1,6 +1,7 @@
 ---
 import "../styles/global.css";
 import SpeedInsights from "@vercel/speed-insights/astro";
+import SEO from "../components/SEO.astro";
 
 interface Props {
 	title: string;
@@ -19,141 +20,16 @@ const {
 <html lang={lang}>
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=1" />
 		<link rel="apple-touch-icon" href="/favicon.svg?v=1" />
 		<meta name="generator" content={Astro.generator} />
-		<title>{title}</title>
 
-		{/* SEO Meta Tags */}
-		<meta name="keywords" content={lang === 'ro' 
-			? "șlefuire parchet Chișinău, ciclare parchet, restaurare parchet, lăcuire parchet, preț șlefuire parchet"
-			: "циклевка паркета Кишинев, шлифовка паркета, реставрация паркета, лакировка паркета, цена циклевки"} 
-		/>
-		<meta name="author" content="ParchetMaster" />
-		<meta name="robots" content="index, follow" />
-
-		{/* Structured Data - WebSite */}
-		<script type="application/ld+json" is:inline>
-			{
-				"@context": "https://schema.org",
-				"@type": "WebSite",
-				"name": "ParchetMaster",
-				"url": "https://parchetmaster.vercel.app/"
-			}
-		</script>
-
-		{/* Structured Data - LocalBusiness */}
-		<script type="application/ld+json" is:inline>
-			{
-				"@context": "https://schema.org",
-				"@type": "LocalBusiness",
-				"name": "ParchetMaster",
-				"image": "https://parchetmaster.vercel.app/parquet_header.webp",
-				"telephone": "+37360588967",
-				"address": {
-					"@type": "PostalAddress",
-					"addressLocality": "Chișinău",
-					"addressCountry": "MD"
-				},
-				"openingHours": "Mo-Su 00:00-23:59",
-				"priceRange": "MDL",
-				"description": {
-					"ru": "Профессиональная циклевка, шлифовка и реставрация паркета в Кишиневе",
-					"ro": "Ciclare profesională, șlefuire și restaurare parchet în Chișinău"
-				},
-				"sameAs": [
-					"https://wa.me/37360588967",
-					"viber://chat?number=37360588967"
-				],
-				"areaServed": {
-					"@type": "City",
-					"name": "Chișinău"
-				},
-				"hasOfferCatalog": {
-					"@type": "OfferCatalog",
-					"name": "Servicii de restaurare parchet",
-					"itemListElement": [
-						{
-							"@type": "Offer",
-							"itemOffered": {
-								"@type": "Service",
-								"name": "Ciclare parchet / Циклевка паркета"
-							}
-						},
-						{
-							"@type": "Offer",
-							"itemOffered": {
-								"@type": "Service",
-								"name": "Șlefuire parchet / Шлифовка паркета"
-							}
-						},
-						{
-							"@type": "Offer",
-							"itemOffered": {
-								"@type": "Service",
-								"name": "Lăcuire parchet / Лакировка паркета"
-							}
-						},
-						{
-							"@type": "Offer",
-							"itemOffered": {
-								"@type": "Service",
-								"name": "Reparație parchet / Ремонт паркета"
-							}
-						}
-					]
-				}
-			}
-		</script>
-
-		{/* SEO & Multilingual */}
-		<link
-			rel="canonical"
-			href={`https://parchetmaster.vercel.app${Astro.url.pathname}`}
-		/>
-		<link
-			rel="alternate"
-			hreflang="ru"
-			href={`https://parchetmaster.vercel.app${Astro.url.pathname.replace(/^\/ro/, "")}`}
-		/>
-		<link
-			rel="alternate"
-			hreflang="ro"
-			href={`https://parchetmaster.vercel.app/ro${Astro.url.pathname.replace(/^\/ro/, "")}`}
-		/>
-		<link
-			rel="alternate"
-			hreflang="x-default"
-			href={`https://parchetmaster.vercel.app${Astro.url.pathname.replace(/^\/ro/, "")}`}
-		/>
+		<SEO title={title} description={description} lang={lang} />
 
 		<meta
 			name="google-site-verification"
 			content="XgUGOzB0MYKfA-yicMUwci9eC50yZGTlVRtL86kT1xc"
-		/>
-
-		{/* Open Graph / Facebook */}
-		<meta property="og:type" content="website" />
-		<meta property="og:url" content={Astro.url} />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:locale" content={lang === 'ro' ? 'ro_RO' : 'ru_MD'} />
-		<meta property="og:site_name" content="ParchetMaster" />
-		<meta
-			property="og:image"
-			content="https://parchetmaster.vercel.app/parquet_header.webp"
-		/>
-
-		{/* Twitter */}
-		<meta property="twitter:card" content="summary_large_image" />
-		<meta property="twitter:url" content={Astro.url} />
-		<meta property="twitter:title" content={title} />
-		<meta property="twitter:description" content={description} />
-		<meta
-			property="twitter:image"
-			content="https://parchetmaster.vercel.app/parquet_header.webp"
 		/>
 
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -163,8 +39,12 @@ const {
 			rel="stylesheet"
 		/>
 
-		{/* Preload critical images */}
-		<link rel="preload" as="image" href="/parquet_header.webp" type="image/webp" />
+		<link
+			rel="preload"
+			as="image"
+			href="/parquet_header.webp"
+			type="image/webp"
+		/>
 	</head>
 	<body
 		class="font-sans antialiased text-stone-900 bg-[#fdfcfb] relative selection:bg-amber-200"

@@ -34,8 +34,9 @@ const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-[1000] flex items-center justify-center p-4 sm:p-8 bg-espresso/98 backdrop-blur-2xl overflow-y-auto pt-24 sm:pt-32"
+                className="fixed inset-0 z-[99999] flex items-center justify-center p-4 sm:p-8 bg-espresso/98 backdrop-blur-2xl overflow-y-auto pt-8 sm:pt-16"
                 onClick={onClose}
+                style={{ pointerEvents: 'auto' }}
             >
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0, y: 20 }}
@@ -43,11 +44,12 @@ const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
                     className="relative bg-parchment w-full max-w-5xl rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white/10 my-auto"
                     onClick={(e) => e.stopPropagation()}
+                    style={{ pointerEvents: 'auto' }}
                 >
                     {/* Close Button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-6 right-6 z-10 bg-white/10 hover:bg-cognac text-white p-3 rounded-full transition-colors backdrop-blur-md"
+                        className="absolute top-6 right-6 z-[100000] bg-white/10 hover:bg-cognac text-white p-3 rounded-full transition-colors backdrop-blur-md"
                         aria-label="Close modal"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -58,9 +60,9 @@ const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
                     <div className="grid grid-cols-1 lg:grid-cols-2">
                         {/* Before Image */}
                         <div className="relative group">
-                            <img 
-                                src={item.beforeImage} 
-                                alt={`${item.title} - ${t('gallery.before')}`} 
+                            <img
+                                src={item.beforeImage}
+                                alt={`${item.title} - ${t('gallery.before')}`}
                                 className="w-full h-full object-cover aspect-[4/3]"
                                 loading="lazy"
                                 decoding="async"
@@ -72,9 +74,9 @@ const GalleryModal: React.FC<Props> = ({ item, lang, onClose }) => {
 
                         {/* After Image */}
                         <div className="relative group border-l-4 border-white/5">
-                            <img 
-                                src={item.afterImage} 
-                                alt={`${item.title} - ${t('gallery.after')}`} 
+                            <img
+                                src={item.afterImage}
+                                alt={`${item.title} - ${t('gallery.after')}`}
                                 className="w-full h-full object-cover aspect-[4/3]"
                                 loading="lazy"
                                 decoding="async"

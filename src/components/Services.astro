@@ -1,0 +1,46 @@
+---
+import { useTranslations } from "../i18n/ui";
+
+interface Props {
+    lang: "ru" | "ro";
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const services = [
+    { key: "item1" },
+    { key: "item2" },
+    { key: "item3" },
+    { key: "item4" },
+];
+---
+
+<section id="services" class="py-24 bg-[#5B3A29] relative overflow-hidden">
+    <div
+        class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/dark-wood.png')]"
+    >
+    </div>
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h2
+            class="text-4xl sm:text-5xl font-extrabold text-center text-white mb-16 uppercase tracking-tight"
+        >
+            {t("services.title")}
+            <span class="text-cognac">{t("services.title_accent")}</span>
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {
+                services.map((item) => (
+                    <div class="bg-walnut/40 backdrop-blur-sm p-8 rounded-[2rem] border border-white/10 hover:border-cognac/50 hover:bg-walnut/60 transition-all duration-500 group">
+                        <h3 class="text-xl font-bold mb-4 text-white group-hover:text-cognac transition-colors italic">
+                            {t(`services.${item.key}.title` as any)}
+                        </h3>
+                        <p class="text-stone-300 text-sm leading-relaxed">
+                            {t(`services.${item.key}.desc` as any)}
+                        </p>
+                    </div>
+                ))
+            }
+        </div>
+    </div>
+</section>

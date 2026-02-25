@@ -1,0 +1,76 @@
+---
+import { useTranslations } from "../i18n/ui";
+
+interface Props {
+    lang: "ru" | "ro";
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+
+const faqItems = ["q1", "q2", "q3", "q4", "q5"];
+---
+
+<section id="faq" class="py-24 bg-parchment relative overflow-hidden">
+    <div
+        class="absolute inset-0 opacity-40 bg-[url('https://www.transparenttextures.com/patterns/pinstriped-suit.png')]"
+    >
+    </div>
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+            <h2
+                class="text-4xl sm:text-5xl font-serif font-bold text-stone-900 mb-6"
+            >
+                {t("faq.title")}
+                <span class="text-cognac">{t("faq.title_accent")}</span>
+            </h2>
+            <div class="w-24 h-1.5 bg-cognac mx-auto rounded-full"></div>
+        </div>
+
+        <div class="space-y-6">
+            {
+                faqItems.map((item, index) => (
+                    <details class="group bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+                        <summary class="flex justify-between items-center cursor-pointer p-6 text-lg font-bold text-espresso group-hover:bg-stone-50 transition">
+                            {t(`faq.${item}` as any)}
+                            <svg
+                                class="w-6 h-6 text-cognac transform group-open:rotate-180 transition-transform"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 9l-7 7-7-7"
+                                />
+                            </svg>
+                        </summary>
+                        <div class="px-6 pb-6 text-stone-600 leading-relaxed">
+                            {t(`faq.a${index + 1}` as any)}
+                        </div>
+                    </details>
+                ))
+            }
+        </div>
+
+        {/* FAQ Structured Data */}
+        <script
+            type="application/ld+json"
+            is:inline
+            set:html={JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "FAQPage",
+                mainEntity: faqItems.map((item, index) => ({
+                    "@type": "Question",
+                    name: t(`faq.${item}` as any),
+                    acceptedAnswer: {
+                        "@type": "Answer",
+                        text: t(`faq.a${index + 1}` as any),
+                    },
+                })),
+            })}
+        />
+    </div>
+</section>

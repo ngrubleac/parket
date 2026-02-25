@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { createPortal } from 'react-dom';
 import GalleryModal from './GalleryModal';
 import { ui } from '../i18n/ui';
 
@@ -18,6 +19,11 @@ interface Props {
 const GalleryGrid: React.FC<Props> = ({ items, lang }) => {
     const t = (key: string) => (ui[lang] as any)[key] || (ui['ru'] as any)[key];
     const [selectedItem, setSelectedItem] = React.useState<GalleryItem | null>(null);
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
 
     if (!items || items.length === 0) {
         return (
@@ -72,12 +78,13 @@ const GalleryGrid: React.FC<Props> = ({ items, lang }) => {
                 </div>
             ))}
 
-            {selectedItem && (
+            {selectedItem && mounted && createPortal(
                 <GalleryModal
                     item={selectedItem}
                     lang={lang}
                     onClose={() => setSelectedItem(null)}
-                />
+                />,
+                document.body
             )}
         </div>
     );

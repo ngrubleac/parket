@@ -1,0 +1,50 @@
+---
+import InteractiveReveal from "./InteractiveReveal";
+import { useTranslations } from "../i18n/ui";
+
+interface Props {
+    lang: "ru" | "ro";
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<section
+    class="relative py-32 px-4 sm:px-6 lg:px-8 text-center text-white overflow-hidden"
+>
+    <InteractiveReveal imageUrl="/parquet_header.webp" client:load />
+
+    <div class="relative z-20 max-w-4xl mx-auto">
+        <h1
+            class="text-4xl sm:text-7xl font-semibold mb-8 tracking-tight animate-fade-in-up leading-tight"
+        >
+            {t("hero.title")}
+            <span class="text-cognac italic">{t("hero.title_accent")}</span>
+        </h1>
+        <p
+            class="text-xl sm:text-2xl text-stone-200 mb-12 max-w-2xl mx-auto animate-fade-in-up delay-200 font-light"
+        >
+            {t("hero.subtitle")}
+            <span class="font-semibold text-white"
+                >{t("hero.subtitle_accent")}</span
+            >
+        </p>
+        <div
+            class="flex flex-col sm:flex-row justify-center gap-6 animate-fade-in-up delay-400"
+        >
+            <a
+                href="#calculator"
+                class="bg-cognac text-white px-10 py-5 rounded-3xl text-lg font-bold hover:brightness-110 transition shadow-2xl transform hover:scale-105"
+            >
+                {t("hero.cta_calc")}
+            </a>
+            <a
+                href="tel:+37360588967"
+                class="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-3xl text-lg font-bold hover:bg-white hover:text-espresso transition transform hover:scale-105"
+            >
+                {t("hero.cta_call")}
+            </a>
+        </div>
+    </div>
+</section>

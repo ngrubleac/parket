@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 
 interface InteractiveRevealProps {
     imageUrl: string;
@@ -7,6 +7,19 @@ interface InteractiveRevealProps {
 export default function InteractiveReveal({ imageUrl }: InteractiveRevealProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [mousePos, setMousePos] = useState({ x: 50, y: 50 });
+    const requestRef = useRef<number>(0);
+    const currentPos = useRef({ x: 50, y: 50 });
+
+    const updatePosition = useCallback((x: number, y: number) => {
+        currentPos.current = { x, y };
+
+        if (!requestRef.current) {
+            requestRef.current = requestAnimationFrame(() => {
+                setMousePos(currentPos.current);
+                requestRef.current = 0;
+            });
+        }
+    }, []);
 
     useEffect(() => {
         const container = containerRef.current;
@@ -16,7 +29,7 @@ export default function InteractiveReveal({ imageUrl }: InteractiveRevealProps) 
             const rect = container.getBoundingClientRect();
             const x = ((e.clientX - rect.left) / rect.width) * 100;
             const y = ((e.clientY - rect.top) / rect.height) * 100;
-            setMousePos({ x, y });
+            updatePosition(x, y);
         };
 
         const handleTouchMove = (e: TouchEvent) => {
@@ -24,21 +37,25 @@ export default function InteractiveReveal({ imageUrl }: InteractiveRevealProps) 
             const rect = container.getBoundingClientRect();
             const x = ((e.touches[0].clientX - rect.left) / rect.width) * 100;
             const y = ((e.touches[0].clientY - rect.top) / rect.height) * 100;
-            setMousePos({ x, y });
+            updatePosition(x, y);
         };
 
-        // Listen on document to track mouse even over text/buttons
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('mousemove', handleMouseMove, { passive: true });
+        window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
         return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-            document.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('touchmove', handleTouchMove);
+            if (requestRef.current) cancelAnimationFrame(requestRef.current);
         };
-    }, []);
+    }, [updatePosition]);
 
     return (
-        <div ref={containerRef} className="absolute inset-0 z-0 overflow-hidden">
+        <div
+            ref={containerRef}
+            className="absolute inset-0 z-0 overflow-hidden select-none pointer-events-none"
+            aria-hidden="true"
+        >
             {/* Grayscale background layer with dark overlay */}
             <div className="absolute inset-0">
                 <div
@@ -53,12 +70,12 @@ export default function InteractiveReveal({ imageUrl }: InteractiveRevealProps) 
 
             {/* Color reveal layer - enhanced brightness and contrast */}
             <div
-                className="absolute inset-0 bg-cover bg-center transition-all duration-200 ease-out z-10"
+                className="absolute inset-0 bg-cover bg-center transition-opacity duration-500 ease-out z-10"
                 style={{
                     backgroundImage: `url(${imageUrl})`,
-                    filter: 'brightness(1.2) contrast(1.15) saturate(1.1)',
-                    maskImage: `radial-gradient(circle 400px at ${mousePos.x}% ${mousePos.y}%, black 0%, transparent 100%)`,
-                    WebkitMaskImage: `radial-gradient(circle 400px at ${mousePos.x}% ${mousePos.y}%, black 0%, transparent 100%)`
+                    filter: 'brightness(1.2) contrast(1.1) saturate(1.1)',
+                    maskImage: `radial-gradient(circle 350px at ${mousePos.x}% ${mousePos.y}%, black 0%, transparent 80%)`,
+                    WebkitMaskImage: `radial-gradient(circle 350px at ${mousePos.x}% ${mousePos.y}%, black 0%, transparent 80%)`
                 }}
             />
         </div>
