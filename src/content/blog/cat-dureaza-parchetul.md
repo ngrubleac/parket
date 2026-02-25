@@ -1,5 +1,4 @@
 ---
-slug: 'cat-dureaza-parchetul-dupa-restaurare'
 title: 'Cât durează parchetul după restaurare? 5 factori de durabilitate'
 description: 'Aflați câți ani va rezista parchetul după ciclare și lăcuire. De ce depinde durata de viață, cum să prelungiți viața stratului și când este necesară re-restaurarea.'
 author: 'ParchetMaster'

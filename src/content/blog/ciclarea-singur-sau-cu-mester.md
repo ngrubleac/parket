@@ -1,5 +1,4 @@
 ---
-slug: 'ciclarea-parchetului-singur-sau-cu-mester'
 title: 'Ciclarea parchetului singur sau cu meșter? Ghid complet 2026'
 description: 'Comparăm costul și calitatea ciclării parchetului DIY vs restaurarea profesională. Aflați când merită să faceți singuri și când e mai bine să chemați meșterul.'
 author: 'ParchetMaster'

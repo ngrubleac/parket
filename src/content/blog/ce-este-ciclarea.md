@@ -1,5 +1,4 @@
 ---
-slug: 'ce-este-ciclarea-slefuirea-lacuirea'
 title: 'Ce este ciclarea, șlefuirea și lăcuirea în două straturi? Ghid complet'
 description: 'Explicăm fiecare etapă a restaurării parchetului: ciclare, șlefuire, grunduire și lăcuire. Aflați cum se face restaurarea și de ce sunt necesare 2 straturi de lac.'
 author: 'ParchetMaster'
